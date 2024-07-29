@@ -82,7 +82,7 @@ const ChewingTesting: React.FC<ChewingTestingProps> = ({
     // Set up interval to calculate every second
     const interval = setInterval(() => {
       calculateChewingFrequency();
-    }, 800); // Every second
+    }, 100); // Every 10th of a second
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(interval);
@@ -99,8 +99,8 @@ const ChewingTesting: React.FC<ChewingTestingProps> = ({
         if (gazingStartTime === null) {
           setGazingStartTime(Date.now());
         } else {
-          const elapsedTime = (Date.now() - gazingStartTime) / 1000;
-          if (elapsedTime > 3) {
+          const elapsedTime = (Date.now() - gazingStartTime);
+          if (elapsedTime > 3000) {
             setIsEating(false);
             setReminder(
               "Please don't forget to chew your food while watching the video."
@@ -109,16 +109,29 @@ const ChewingTesting: React.FC<ChewingTestingProps> = ({
           }
         }
       } else {
-        setIsEating(true);
-        setReminder(null);
-        setGazingStartTime(null);
-      }
+        const resetStates = () => {
+          setIsEating(true);
+          setReminder(null);
+          setGazingStartTime(null);
+        };
+        if (gazingStartTime === null) {
+          resetStates();
+        } else if (Date.now() - gazingStartTime < 600) {
+          setGazingStartTime(null);
+          setReminder(null);
+          if (chewingFrequency >=10){
+            setIsEating(true);
+          }
+        } else {
+            resetStates();
+        }
+      } 
     } else {
-      setIsEating(false);
-      setGazingStartTime(null);
-      setReminder(null);
+        setIsEating(false);
+        setGazingStartTime(null);
+        setReminder(null);
     }
-  }, [chewingFrequency, isGazing]);
+  }, [chewingFrequency, isGazing, gazingStartTime]);
 
   useEffect(() => {
     if (!videoRef.current || typeof window === "undefined") return;

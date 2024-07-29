@@ -178,7 +178,7 @@ export default function useSignalProcessing(
       updateDataRef("removedPeaks", []);
     }
     updateDataRef("data", [...data.slice(-itemsNo), newItem]);
-  }, [animate, newItem, noseTip, cutOffFrequency, itemsNo, dataRef.current.herz]);
+  }, [animate, newItem, noseTip, dataRef.current.herz, dataRef.current.data, dataRef.current.filteredData, dataRef.current.nosePointDistance]);
 
   return useMemo(() => {
     return {
