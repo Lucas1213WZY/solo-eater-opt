@@ -82,7 +82,7 @@ const ChewingTesting: React.FC<ChewingTestingProps> = ({
     // Set up interval to calculate every second
     const interval = setInterval(() => {
       calculateChewingFrequency();
-    }, 100); // Every 10th of a second
+    }, 800); // Every 0.8 second
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(interval);
