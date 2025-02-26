@@ -74,8 +74,9 @@ export const getMesh = (predictions: Prediction[]): MeshResult => {
     // added lip points 13, 82, 312
     const faceOvalIndexes = [
       58, 84, 17, 314, 172, 136, 150, 149, 176, 178, 148, 152, 377, 400, 378, 379, 365, 397,
-      288, 381,
+      288,
     ];
+
     namedKeypoints["faceOval"] = faceOvalIndexes.map((d) => keypoints[d]);
 
     noseTip = { ...keypoints[195], name: "nose tip" };
@@ -125,41 +126,38 @@ export const drawOnCanvas = (
 
     if (leftEyePoint) {
       ctx.beginPath();
-      ctx.arc(leftEyePoint.x, leftEyePoint.y, 1, 0, 2 * Math.PI);
       ctx.fillStyle = "aqua";
       ctx.fill();
     }
 
     if (rightEyePoint) {
       ctx.beginPath();
-      ctx.arc(rightEyePoint.x, rightEyePoint.y, 1, 0, 2 * Math.PI);
       ctx.fillStyle = "red";
       ctx.fill();
     }
 
     if (namedKeypoints["faceOval"]) {
+      // Draw all face oval points
       namedKeypoints["faceOval"].forEach((point) => {
         ctx.beginPath();
         ctx.arc(point.x, point.y, 1, 0, 2 * Math.PI);
         ctx.fillStyle = "aqua";
         ctx.fill();
-
-        if (leftEyePoint) {
-          ctx.beginPath();
-          ctx.moveTo(leftEyePoint.x, leftEyePoint.y);
-          ctx.lineTo(point.x, point.y);
-          ctx.stroke();
-        }
-
-        if (rightEyePoint) {
-          ctx.beginPath();
-          ctx.moveTo(rightEyePoint.x, rightEyePoint.y);
-          ctx.lineTo(point.x, point.y);
-          ctx.stroke();
-        }
       });
+
+      // Draw lines from the nose tip to each face oval point
+      const noseTip = namedKeypoints["noseTip"] ? namedKeypoints["noseTip"][0] : null;
+      if (noseTip) {
+        namedKeypoints["faceOval"].forEach((point) => {
+          ctx.beginPath();
+          ctx.moveTo(noseTip.x, noseTip.y);  // Nose tip point
+          ctx.lineTo(point.x, point.y);      // Face oval point
+          ctx.stroke();
+        });
+      }
     }
 
+    // Draw nose points
     const nosePoints = ["noseTip", "leftNose", "rightNose"] as const;
     const noseColors: Record<typeof nosePoints[number], string> = {
       noseTip: "green",
