@@ -2,10 +2,9 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import YouTubePlayer from "@/components/YouTubePlayer";
-import BackButton from "@/components/BackButton";
 import DanmakuComp from "@/components/Danmaku";
 import { useData } from "@/context/DataContext";
-import { VideoProvider, useVideo } from "@/context/VideoContext";
+import { VideoProvider } from "@/context/VideoContext";
 import dynamic from "next/dynamic";
 
 // Dynamically import the ChewingTesting component with SSR disabled
@@ -26,12 +25,12 @@ const PlayerPage: React.FC = () => {
     setUserBehaviorInfo,
   } = useData();
 
-  const isFirstChange = useRef(true); // 使用 useRef 来跟踪第一次状态变化
+  const isFirstChange = useRef(true); // Track first state change
 
   useEffect(() => {
     const updateBehaviorInfo = () => {
       if (isFirstChange.current) {
-        // 第一次状态变化，不记录时间
+        // Skip first state change
         isFirstChange.current = false;
         return;
       }
@@ -61,7 +60,7 @@ const PlayerPage: React.FC = () => {
     console.log("isGazing value:", isGazing);
   }, [isGazing]);
 
-  // 提取 YouTube 视频 ID https://www.youtube.com/watch?v=lAmXfsZvTFo&ab_channel=GhibliRelaxingSoul
+  // Extract YouTube video ID
   const getYouTubeVideoId = (url: string) => {
     if (videoLink) {
       const urlParams = new URLSearchParams(new URL(url).search);
@@ -70,29 +69,27 @@ const PlayerPage: React.FC = () => {
     return "";
   };
 
-  // 提取 YouTube 视频 ID
   const videoId = getYouTubeVideoId(videoLink);
 
   return (
     <VideoProvider>
-      <div className="h-screen w-full flex flex-col items-center justify-center bg-black">
-        {/* <div className="absolute top-4 left-4 text-white z-50">
-        <BackButton fontSize={48} />
-      </div> */}
-        <div className="w-full h-full flex flex-col items-center justify-center z-40">
+      <div className="h-screen w-full bg-black flex">
+        {/* Video Player in the center of the left side */}
+        <div className="w-1/2 h-full flex items-center justify-center p-2">
           {videoId ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <YouTubePlayer videoId={videoId} />
-              {!isEating && <DanmakuComp />}
+            <div className="relative w-full" style={{ paddingTop: "56.25%" /* 16:9 Aspect Ratio */ }}>
+              <div className="absolute top-0 left-0 w-full h-full">
+                <YouTubePlayer videoId={videoId} />
+                {!isEating && <DanmakuComp />}
+              </div>
             </div>
           ) : (
-            <div className="text-white">
-              No video link provided or invalid video ID.
-            </div>
+            <div className="text-white">No video link provided or invalid video ID.</div>
           )}
         </div>
 
-        <div className="absolute h-[50px] w-[50px] z-50 hidden">
+        {/* Chewing Testing on the right side */}
+        <div className="w-1/2 h-full p-2 bg-gray-800">
           <ChewingTestingNoSSR />
         </div>
       </div>
