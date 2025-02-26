@@ -75,7 +75,7 @@ const PlayerPage: React.FC = () => {
     <VideoProvider>
       <div className="h-screen w-full bg-black flex">
         {/* Video Player in the center of the left side */}
-        <div className="w-1/2 h-full flex items-center justify-center p-2">
+        <div className="w-3/5 h-full flex items-center justify-center p-2">
           {videoId ? (
             <div className="relative w-full" style={{ paddingTop: "56.25%" /* 16:9 Aspect Ratio */ }}>
               <div className="absolute top-0 left-0 w-full h-full">
@@ -89,8 +89,11 @@ const PlayerPage: React.FC = () => {
         </div>
 
         {/* Chewing Testing on the right side */}
-        <div className="w-1/2 h-full p-2 bg-gray-800">
-          <ChewingTestingNoSSR />
+        <div className="w-2/5 h-full flex items-center p-2 bg-black">
+          <div className="relative w-full h-full"style={{/* 16:9 Aspect Ratio */ }}>
+          <div className="absolute top-0 left-0 w-full h-full"></div>
+              <ChewingTestingNoSSR />
+          </div>
         </div>
       </div>
     </VideoProvider>
